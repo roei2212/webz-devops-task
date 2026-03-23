@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  webz-001:
+    build: ./cluster
+    container_name: webz-001
+    privileged: true
+    networks:
+      - webz-net
+
+  webz-002:
+    build: ./cluster
+    container_name: webz-002
+    privileged: true
+    networks:
+      - webz-net
+
+  webz-003:
+    build: ./cluster
+    container_name: webz-003
+    privileged: true
+    networks:
+      - webz-net
+
+  webz-004:
+    build: ./jenkins
+    container_name: webz-004
+    privileged: true
+    ports:
+      - "8080:8080"
+    networks:
+      - webz-net
+    volumes:
+      - ./jenkins/logs:/logs
+
+networks:
+  webz-net:
+    driver: bridge
+
