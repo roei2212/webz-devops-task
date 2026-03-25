@@ -26,14 +26,16 @@ services:
     build: ./jenkins
     container_name: webz-004
     privileged: true
+    user: root
     ports:
       - "8080:8080"
     networks:
       - webz-net
     volumes:
+      - ./jenkins/home:/var/jenkins_home
       - ./jenkins/logs:/logs
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   webz-net:
     driver: bridge
-

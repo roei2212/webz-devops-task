@@ -1,21 +1,18 @@
-FROM ubuntu:18.04
+FROM jenkins/jenkins:lts
 
-# Install dependencies
-RUN apt update && \
-    apt install -y openjdk-11-jdk wget gnupg curl && \
-    apt clean
+USER root
 
-# Install Jenkins
-RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | apt-key add - && \
-    echo "deb https://pkg.jenkins.io/debian binary/" > /etc/apt/sources.list.d/jenkins.list && \
-    apt update && \
-    apt install -y jenkins && \
-    apt clean
+# Install Docker CLI
+RUN apt-get update && \
+    apt-get install -y docker.io curl && \
+    apt-get clean
 
-# Expose Jenkins port
-EXPOSE 8080
+# Install docker-compose (standalone binary)
+RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
+    -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose
 
-# Create logs directory inside container
-RUN mkdir -p /logs
+# Add Jenkins user to docker group
+RUN usermod -aG docker jenkins
 
-CMD ["bash", "-c", "service jenkins start && tail -f /var/log/jenkins/jenkins.log"]
+USER jenkins
